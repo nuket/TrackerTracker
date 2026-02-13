@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "CookieMonitor",
+  "version": "1.0",
+  "description": "Tracks advertising domains accessed by different tabs while browsing.",
+  "permissions": [
+    "webRequest",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "CookieMonitor"
+  }
+}

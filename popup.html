@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      width: 260px;
+      padding: 12px;
+      font-family: system-ui, sans-serif;
+      font-size: 14px;
+    }
+    h2 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+    p {
+      margin: 4px 0;
+      color: #555;
+    }
+    .actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+    }
+    button {
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    button:hover {
+      background: #f0f0f0;
+    }
+    button.danger {
+      color: #c00;
+      border-color: #c00;
+    }
+  </style>
+</head>
+<body>
+  <h2>CookieMonitor</h2>
+  <p id="count">Loading...</p>
+  <div class="actions">
+    <button id="view">View Timeline</button>
+    <button id="clear" class="danger">Clear</button>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
