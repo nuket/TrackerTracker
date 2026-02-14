@@ -171,6 +171,14 @@ chrome.storage.local.get({ requests: [] }, (result) => {
     setZoom(zoomLevel + delta);
   }, { passive: false });
 
+  // Clear data button
+  document.getElementById("clear-data").addEventListener("click", () => {
+    if (!confirm("Clear all recorded data? This cannot be undone.")) return;
+    chrome.storage.local.remove("requests", () => {
+      location.reload();
+    });
+  });
+
   // Initial render
   renderTimeline();
 

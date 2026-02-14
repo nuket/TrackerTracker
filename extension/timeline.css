@@ -127,6 +127,20 @@ h1 {
   font-size: 13px;
 }
 
+#zoom-controls #clear-data {
+  margin-left: auto;
+  width: auto;
+  height: auto;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: #d32f2f;
+  border-color: #d32f2f;
+}
+
+#zoom-controls #clear-data:hover {
+  background: #fbe9e7;
+}
+
 #zoom-level {
   font-size: 13px;
   min-width: 40px;
