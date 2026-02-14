@@ -64,6 +64,9 @@ chrome.webRequest.onBeforeRequest.addListener(
     chrome.tabs.get(details.tabId, (tab) => {
       if (chrome.runtime.lastError || !tab || !tab.url) return;
 
+      // Skip requests made by the extension itself
+      if (tab.url.startsWith(chrome.runtime.getURL(""))) return;
+
       const tabDomain = extractDomain(tab.url);
       if (!tabDomain) return;
 
