@@ -25,7 +25,7 @@ h1 {
   font-size: 14px;
 }
 
-#timeline {
+.timeline-container {
   position: relative;
   overflow-x: auto;
   background: #fff;
@@ -33,6 +33,12 @@ h1 {
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 24px;
+}
+
+.section-heading {
+  font-size: 15px;
+  color: #444;
+  margin-bottom: 8px;
 }
 
 .timeline-axis {
