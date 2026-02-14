@@ -10,6 +10,10 @@ Chrome extension that tracks the domains that different tabs access while browsi
     * Record the full domain being requested
     * Record the gTLD or country TLD and the next to last component of the domain being requested
     * Record the timestamp when this happened
+    * Do not record requests made by the extension itself
+* Make a summary of the request data
+    * For each requested base domain
+        * Add the timestamp of the request to an array
 * Make a visualization webpage that shows a timeline of requests
     * Make a timeline at the top of the page that shows the name of the websites that were opened
     * Make it possible to zoom in and out of the timeline
