@@ -11,3 +11,4 @@ Chrome extension that tracks the domains that different tabs access while browsi
     * Record the timestamp when this happened
 * Make a visualization webpage that shows a timeline of requests
     * Make a timeline at the top of the page that shows the name of the websites that were opened
+    * Make it possible to zoom in and out of the timeline

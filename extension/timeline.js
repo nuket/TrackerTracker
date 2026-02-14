@@ -25,6 +25,7 @@ chrome.storage.local.get({ requests: [] }, (result) => {
     document.getElementById("details").innerHTML =
       '<div class="no-data">No data to display.</div>';
     document.getElementById("summary").textContent = "No data recorded.";
+    document.getElementById("zoom-controls").style.display = "none";
     return;
   }
 
@@ -51,7 +52,8 @@ chrome.storage.local.get({ requests: [] }, (result) => {
   const globalMax = requests[requests.length - 1].timestamp;
   const span = Math.max(globalMax - globalMin, 1000); // at least 1s
 
-  const BAR_WIDTH = 800;
+  const BASE_BAR_WIDTH = 800;
+  const TICK_COUNT = 8;
 
   // Assign colors to requested domains
   const domainSet = [...new Set(requests.map((r) => r.requestedDomain))].sort();
@@ -66,50 +68,111 @@ chrome.storage.local.get({ requests: [] }, (result) => {
     groups.length + " site(s), from " +
     formatDateTime(globalMin) + " to " + formatDateTime(globalMax);
 
-  // Build time axis
-  const TICK_COUNT = 8;
-  const timelineEl = document.getElementById("timeline");
-  let axisHTML = '<div class="timeline-axis"><div class="timeline-label"></div><div class="timeline-bar-area" style="min-width:' + BAR_WIDTH + 'px;position:relative;">';
-  for (let i = 0; i <= TICK_COUNT; i++) {
-    const t = globalMin + (span * i) / TICK_COUNT;
-    const left = (i / TICK_COUNT) * 100;
-    axisHTML += '<span class="tick" style="position:absolute;left:' + left + '%;transform:translateX(-50%)">' + formatTime(t) + "</span>";
-  }
-  axisHTML += "</div></div>";
+  // Zoom state
+  let zoomLevel = 1;
+  const MIN_ZOOM = 0.25;
+  const MAX_ZOOM = 10;
+  const ZOOM_STEP = 0.25;
 
-  // Build rows
-  let rowsHTML = "";
-  groups.forEach((group) => {
-    let label = group.tabTitle;
-    if (label.length > 30) label = label.substring(0, 28) + "...";
+  function renderTimeline() {
+    const barWidth = Math.round(BASE_BAR_WIDTH * zoomLevel);
+    const timelineEl = document.getElementById("timeline");
 
-    let segmentsHTML = "";
-    // Draw tick lines
+    // Build time axis
+    let axisHTML = '<div class="timeline-axis"><div class="timeline-label"></div><div class="timeline-bar-area" style="min-width:' + barWidth + 'px;position:relative;">';
     for (let i = 0; i <= TICK_COUNT; i++) {
+      const t = globalMin + (span * i) / TICK_COUNT;
       const left = (i / TICK_COUNT) * 100;
-      segmentsHTML += '<div class="timeline-tick-line" style="left:' + left + '%"></div>';
+      axisHTML += '<span class="tick" style="position:absolute;left:' + left + '%;transform:translateX(-50%)">' + formatTime(t) + "</span>";
+    }
+    axisHTML += "</div></div>";
+
+    // Build rows
+    let rowsHTML = "";
+    groups.forEach((group) => {
+      let label = group.tabTitle;
+      if (label.length > 30) label = label.substring(0, 28) + "...";
+
+      let segmentsHTML = "";
+      // Draw tick lines
+      for (let i = 0; i <= TICK_COUNT; i++) {
+        const left = (i / TICK_COUNT) * 100;
+        segmentsHTML += '<div class="timeline-tick-line" style="left:' + left + '%"></div>';
+      }
+
+      for (const r of group.requests) {
+        const pos = ((r.timestamp - globalMin) / span) * 100;
+        const color = domainColorMap[r.requestedDomain];
+        segmentsHTML +=
+          '<div class="timeline-segment" ' +
+          'style="left:' + pos + "%;width:6px;background:" + color + '" ' +
+          'data-domain="' + r.tabDomain + '" ' +
+          'title="' + r.requestedDomain + " at " + formatTime(r.timestamp) + '"' +
+          "></div>";
+      }
+
+      rowsHTML +=
+        '<div class="timeline-row" data-domain="' + group.tabDomain + '">' +
+        '<div class="timeline-label" title="' + group.tabDomain + '">' + label + "</div>" +
+        '<div class="timeline-bar-area" style="min-width:' + barWidth + 'px;position:relative;">' +
+        segmentsHTML +
+        "</div></div>";
+    });
+
+    timelineEl.innerHTML = axisHTML + rowsHTML;
+
+    // Re-attach click handlers on rows
+    for (const row of document.querySelectorAll(".timeline-row")) {
+      row.style.cursor = "pointer";
+      row.addEventListener("click", () => {
+        const domain = row.dataset.domain;
+        const heading = [...document.querySelectorAll("#details h3")].find(
+          (h) => h.textContent.includes(domain)
+        );
+        if (heading) heading.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
     }
 
-    for (const r of group.requests) {
-      const pos = ((r.timestamp - globalMin) / span) * 100;
-      const color = domainColorMap[r.requestedDomain];
-      segmentsHTML +=
-        '<div class="timeline-segment" ' +
-        'style="left:' + pos + "%;width:6px;background:" + color + '" ' +
-        'data-domain="' + r.tabDomain + '" ' +
-        'title="' + r.requestedDomain + " at " + formatTime(r.timestamp) + '"' +
-        "></div>";
-    }
+    // Update zoom label
+    document.getElementById("zoom-level").textContent = Math.round(zoomLevel * 100) + "%";
+  }
 
-    rowsHTML +=
-      '<div class="timeline-row" data-domain="' + group.tabDomain + '">' +
-      '<div class="timeline-label" title="' + group.tabDomain + '">' + label + "</div>" +
-      '<div class="timeline-bar-area" style="min-width:' + BAR_WIDTH + 'px;position:relative;">' +
-      segmentsHTML +
-      "</div></div>";
+  function setZoom(newLevel) {
+    const timelineEl = document.getElementById("timeline");
+    const oldScrollLeft = timelineEl.scrollLeft;
+    const oldBarWidth = BASE_BAR_WIDTH * zoomLevel;
+    const scrollCenter = oldScrollLeft + timelineEl.clientWidth / 2;
+    const scrollRatio = oldBarWidth > 0 ? scrollCenter / oldBarWidth : 0;
+
+    zoomLevel = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newLevel));
+    renderTimeline();
+
+    // Maintain scroll position relative to the center of the viewport
+    const newBarWidth = BASE_BAR_WIDTH * zoomLevel;
+    timelineEl.scrollLeft = scrollRatio * newBarWidth - timelineEl.clientWidth / 2;
+  }
+
+  // Zoom controls
+  document.getElementById("zoom-in").addEventListener("click", () => {
+    setZoom(zoomLevel + ZOOM_STEP);
+  });
+  document.getElementById("zoom-out").addEventListener("click", () => {
+    setZoom(zoomLevel - ZOOM_STEP);
+  });
+  document.getElementById("zoom-reset").addEventListener("click", () => {
+    setZoom(1);
   });
 
-  timelineEl.innerHTML = axisHTML + rowsHTML;
+  // Ctrl + scroll to zoom
+  document.getElementById("timeline").addEventListener("wheel", (e) => {
+    if (!e.ctrlKey) return;
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
+    setZoom(zoomLevel + delta);
+  }, { passive: false });
+
+  // Initial render
+  renderTimeline();
 
   // Legend
   let legendHTML = "<h2>Domains Legend</h2><div style='display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px'>";
@@ -136,16 +199,4 @@ chrome.storage.local.get({ requests: [] }, (result) => {
   }
 
   detailsEl.innerHTML = detailsHTML;
-
-  // Click on a row to scroll to its details
-  for (const row of document.querySelectorAll(".timeline-row")) {
-    row.style.cursor = "pointer";
-    row.addEventListener("click", () => {
-      const domain = row.dataset.domain;
-      const heading = [...document.querySelectorAll("#details h3")].find(
-        (h) => h.textContent.includes(domain)
-      );
-      if (heading) heading.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  }
 });
