@@ -78,14 +78,23 @@ chrome.webRequest.onBeforeRequest.addListener(
         timestamp: Date.now()
       };
 
-      chrome.storage.local.get({ requests: [] }, (result) => {
+      chrome.storage.local.get({ requests: [], summary: {} }, (result) => {
         const requests = result.requests;
         requests.push(entry);
         // Keep last 10000 entries to avoid unbounded growth
         if (requests.length > 10000) {
           requests.splice(0, requests.length - 10000);
         }
-        chrome.storage.local.set({ requests });
+
+        // Summary: for each base domain, collect timestamps
+        const summary = result.summary;
+        const baseDomain = entry.requestedBaseDomain;
+        if (!summary[baseDomain]) {
+          summary[baseDomain] = [];
+        }
+        summary[baseDomain].push(entry.timestamp);
+
+        chrome.storage.local.set({ requests, summary });
       });
     });
   },
