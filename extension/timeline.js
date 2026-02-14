@@ -191,9 +191,9 @@ chrome.storage.local.get({ requests: [] }, (result) => {
   for (const group of groups) {
     detailsHTML += "<h3 style='margin:16px 0 8px;font-size:14px'>" +
       group.tabTitle + " <span style='color:#999;font-weight:normal'>(" + group.tabDomain + ")</span></h3>";
-    detailsHTML += '<table class="detail-table"><thead><tr><th>Requested Domain</th><th>Time</th></tr></thead><tbody>';
+    detailsHTML += '<table class="detail-table"><thead><tr><th>Requested Domain</th><th>Base Domain</th><th>Time</th></tr></thead><tbody>';
     for (const r of group.requests) {
-      detailsHTML += "<tr><td>" + r.requestedDomain + "</td><td>" + formatDateTime(r.timestamp) + "</td></tr>";
+      detailsHTML += "<tr><td>" + r.requestedDomain + "</td><td>" + (r.requestedBaseDomain || r.requestedDomain) + "</td><td>" + formatDateTime(r.timestamp) + "</td></tr>";
     }
     detailsHTML += "</tbody></table>";
   }
