@@ -16,9 +16,10 @@ function formatDateTime(ts) {
   return new Date(ts).toLocaleString();
 }
 
-chrome.storage.local.get({ requests: [], summary: {} }, (result) => {
+chrome.storage.local.get({ requests: [], summary: {}, domainCounts: {} }, (result) => {
   const requests = result.requests;
   const summary = result.summary;
+  const domainCounts = result.domainCounts;
 
   if (requests.length === 0) {
     document.getElementById("timeline-base").innerHTML =
@@ -233,13 +234,50 @@ chrome.storage.local.get({ requests: [], summary: {} }, (result) => {
   // Clear data button
   document.getElementById("clear-data").addEventListener("click", () => {
     if (!confirm("Clear all recorded data? This cannot be undone.")) return;
-    chrome.storage.local.remove(["requests", "summary"], () => {
+    chrome.storage.local.remove(["requests", "summary", "domainCounts"], () => {
       location.reload();
     });
   });
 
   // Initial render
   renderTimelines();
+
+  // Histogram of base domain request counts
+  const histogramEl = document.getElementById("histogram");
+  const countEntries = Object.entries(domainCounts);
+  const maxCount = countEntries.reduce((max, e) => Math.max(max, e[1]), 1);
+  let histSortByCount = true;
+
+  function renderHistogram() {
+    const sorted = histSortByCount
+      ? [...countEntries].sort((a, b) => b[1] - a[1])
+      : [...countEntries].sort((a, b) => a[0].localeCompare(b[0]));
+
+    let html = "";
+    for (const [domain, count] of sorted) {
+      const pct = (count / maxCount) * 100;
+      const color = baseDomainColorMap[domain] || "#4285f4";
+      html +=
+        '<div class="hist-row">' +
+        '<div class="hist-label" title="' + domain + '">' + domain + "</div>" +
+        '<div class="hist-bar-area">' +
+        '<div class="hist-bar" style="width:' + pct + "%;background:" + color + '"></div>' +
+        "</div>" +
+        '<div class="hist-count">' + count + "</div>" +
+        "</div>";
+    }
+    histogramEl.innerHTML = html || '<div class="no-data">No domain count data yet.</div>';
+
+    document.getElementById("hist-sort-btn").textContent =
+      histSortByCount ? "Sort: Most Requested" : "Sort: Alphabetical";
+  }
+
+  document.getElementById("hist-sort-btn").addEventListener("click", () => {
+    histSortByCount = !histSortByCount;
+    renderHistogram();
+  });
+
+  renderHistogram();
 
   // Legend
   let legendHTML = "<h2>Domains Legend</h2><div style='display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px'>";

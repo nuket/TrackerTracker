@@ -41,6 +41,78 @@ h1 {
   margin-bottom: 8px;
 }
 
+.section-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.section-header-row .section-heading {
+  margin-bottom: 0;
+}
+
+.sort-btn {
+  padding: 4px 12px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  color: #333;
+}
+
+.sort-btn:hover {
+  background: #f0f0f0;
+}
+
+.histogram-container {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.hist-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.hist-label {
+  width: 200px;
+  flex-shrink: 0;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 8px;
+}
+
+.hist-bar-area {
+  flex: 1;
+  height: 20px;
+  background: #f5f5f5;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.hist-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.2s;
+}
+
+.hist-count {
+  width: 50px;
+  flex-shrink: 0;
+  text-align: right;
+  font-size: 13px;
+  color: #555;
+  padding-left: 8px;
+}
+
 .timeline-axis {
   display: flex;
   border-bottom: 1px solid #ddd;

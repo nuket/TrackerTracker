@@ -78,7 +78,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         timestamp: Date.now()
       };
 
-      chrome.storage.local.get({ requests: [], summary: {} }, (result) => {
+      chrome.storage.local.get({ requests: [], summary: {}, domainCounts: {} }, (result) => {
         const requests = result.requests;
         requests.push(entry);
         // Keep last 10000 entries to avoid unbounded growth
@@ -94,7 +94,11 @@ chrome.webRequest.onBeforeRequest.addListener(
         }
         summary[baseDomain].push(entry.timestamp);
 
-        chrome.storage.local.set({ requests, summary });
+        // Domain counts: for each base domain, count total requests
+        const domainCounts = result.domainCounts;
+        domainCounts[baseDomain] = (domainCounts[baseDomain] || 0) + 1;
+
+        chrome.storage.local.set({ requests, summary, domainCounts });
       });
     });
   },
