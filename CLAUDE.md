@@ -24,25 +24,25 @@ Maybe some false positives for Contend Distribution Networks (CDNs) in the curre
 * Make a visualization webpage
     * Make a chart with the tab domains on the Y axis and the requested base domains on the X axis
         * The chart header is "Cross-Website Trackers"
-        * Under the chart header, make an explanation paragraph with single linebreaks between sentences that says:
-          "This chart shows the domains that follow you from one website to another, as you are browsing.
-          Columns with more than one colored dot are tracking you across the websites named at the beginning of each row, these are either ad-tracking domains or Content Distribution Networks (CDNs).
-          Rows show the total number of trackers that a website sets on you (in parentheses), so more dots = more trackers, and lots of dots is bad.
-          Interesting patterns emerge.
-          For example, if you browse `nypost.com` and `theguardian.com`, you see that both use `bidswitch.net` and `doubleclick.net` for tracking."
         * Freeze the Y axis labels so that scrolling always shows the domains
         * Freeze the X axis labels so that scrolling always shows the domains
         * Place a dot at the intersection when the requested base domain was requested by the tab domain
         * For each row, show the dot count in parentheses
         * Do not allow ellipses in the row labels, always show the full text
         * Make a button that can toggle both axes between alphabetical order or sorted by "most dots"
+    * Make an explanation paragraph with single linebreaks between sentences that says:
+        "This chart shows the domains that follow you from one website to another, as you are browsing.
+        Columns with more than one colored dot are tracking you across the websites named at the beginning of each row, these are either ad-tracking domains or Content Distribution Networks (CDNs).
+        Rows show the total number of trackers that a website sets on you (in parentheses), so more dots = more trackers, and lots of dots is bad.
+        Interesting patterns emerge.
+        For example, if you browse `nypost.com` and `theguardian.com`, you see that both use `bidswitch.net` and `doubleclick.net` for tracking."
     * Make a histogram of the number of times the requested base domain was requested using the counted up data
         * The chart header is "Request Counts by Tracking Domain"
         * Under the chart header, make an explanation paragraph with single linebreaks between sentences that says:
           "The Cross-Website Trackers chart above only shows that the webpage you are looking at makes requests to the tracking domains.
            In other words, it takes all of those requests (however many there are!) and folds them into a single dot.
            This histogram shows the actual number of requests to the tracking domains.
-           Requests to subdomains are folded into the tracking domain, i.e. `subdomain.doubleclick.net` -> `doubleclick.net` count.
+           Requests to subdomains are folded into the tracking domain, i.e. `subdomain.doubleclick.net` -> `doubleclick.net` count."
     * Make a timeline with the base domains and when they were requested
     * Under that, make a timeline with the full domains of the websites that were opened
     * Make it possible to zoom in and out of both timelines
