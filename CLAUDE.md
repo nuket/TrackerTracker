@@ -35,6 +35,12 @@ Chrome extension that tracks the domains that different tabs access while browsi
       Interesting patterns emerge.
       For example, if you browse `nypost.com` and `theguardian.com`, you see that both use `bidswitch.net` and `doubleclick.net` for tracking."
     * Make a histogram of the number of times the requested base domain was requested using the counted up data
+        * The chart header is "Request Counts by Tracking Domain"
+        * Under the chart header, make an explanation paragraph with single linebreaks between sentences that says:
+          "The Cross-Website Trackers chart above only shows that the webpage you are looking at makes requests to the tracking domains.
+           In other words, it takes all of those requests (however many there are!) and folds them into a single dot.
+           This histogram shows the actual number of requests to the tracking domains.
+           This could be a lot of requests."
     * Make a timeline with the base domains and when they were requested
     * Under that, make a timeline with the full domains of the websites that were opened
     * Make it possible to zoom in and out of both timelines
