@@ -152,6 +152,24 @@ h1 {
   margin-bottom: 24px;
 }
 
+.browsed-domains-container {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.browsed-domains-container ul {
+  columns: 3;
+  font-size: 13px;
+  padding-left: 20px;
+}
+
+.browsed-domains-container li {
+  padding: 2px 0;
+}
+
 .hist-row {
   display: flex;
   align-items: center;

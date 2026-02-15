@@ -54,6 +54,22 @@ function extractBaseDomain(hostname) {
   return parts.slice(-2).join(".");
 }
 
+// Track browsed domains when tabs are opened/navigated
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status !== "complete" || !tab.url) return;
+  const domain = extractDomain(tab.url);
+  if (!domain || domain === "newtab") return;
+  if (tab.url.startsWith("chrome://") || tab.url.startsWith("chrome-extension://")) return;
+
+  chrome.storage.local.get({ browsedDomains: [] }, (result) => {
+    const browsedDomains = result.browsedDomains;
+    if (browsedDomains.indexOf(domain) === -1) {
+      browsedDomains.push(domain);
+      chrome.storage.local.set({ browsedDomains });
+    }
+  });
+});
+
 chrome.webRequest.onBeforeRequest.addListener(
   (details) => {
     if (details.tabId < 0) return;
@@ -73,11 +89,16 @@ chrome.webRequest.onBeforeRequest.addListener(
       const tabDomain = extractDomain(tab.url);
       if (!tabDomain || tabDomain === "newtab") return;
 
+      const baseDomain = extractBaseDomain(requestedDomain);
+
+      // Skip first-party requests (tab domain ends with the base domain)
+      if (tabDomain.endsWith(baseDomain)) return;
+
       const entry = {
         tabTitle: tab.title || tabDomain,
         tabDomain: tabDomain,
         requestedDomain: requestedDomain,
-        requestedBaseDomain: extractBaseDomain(requestedDomain),
+        requestedBaseDomain: baseDomain,
         timestamp: Date.now()
       };
 

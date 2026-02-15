@@ -10,10 +10,13 @@ Maybe some false positives for Contend Distribution Networks (CDNs) in the curre
 * Each time this happens
     * Record the name and domain of the tab that made the web request
     * Record the full domain being requested
-    * Record the gTLD or country TLD and the next to last component of the domain being requested
+    * Record the gTLD or country TLD and the next to last component of the domain being requested, this is known as the base domain
     * Record the timestamp when this happened
+    * Do not record requests if the tab domain ends with the base domain, filtering out first-party requests.
     * Do not record requests made by "newtab"
     * Do not record requests made by the extension itself
+* Each time a tab is opened
+    * Record the domain in a unique set called "browsedDomains"
 * Make a summary of the request data
     * For each requested base domain
         * Add the timestamp of the request to an array
@@ -22,7 +25,7 @@ Maybe some false positives for Contend Distribution Networks (CDNs) in the curre
     * For each requested base domain
         * Save the unique set of tab domains that requested it
 * Make a visualization webpage
-    * Make a chart with the tab domains on the Y axis and the requested base domains on the X axis
+    * Make a chart with the "browsedDomains" on the Y axis and the requested base domains on the X axis
         * The chart header is "Cross-Website Trackers"
         * Freeze the Y axis labels so that scrolling always shows the domains
         * Freeze the X axis labels so that scrolling always shows the domains
@@ -51,3 +54,4 @@ Maybe some false positives for Contend Distribution Networks (CDNs) in the curre
         * This button should be visible in the extension popup window
     * Make a button that can clear the extension's local storage
     * Make a button that can toggle the histogram between alphabetical order or most-requested order
+    * Print a bulleted list of the domains in the "browsedDomains" set

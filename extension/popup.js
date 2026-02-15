@@ -26,7 +26,7 @@ document.getElementById("test-btn").addEventListener("click", () => {
 });
 
 document.getElementById("clear").addEventListener("click", () => {
-  chrome.storage.local.set({ requests: [], summary: {}, domainCounts: {}, domainRequestors: {} }, () => {
+  chrome.storage.local.set({ requests: [], summary: {}, domainCounts: {}, domainRequestors: {}, browsedDomains: [] }, () => {
     document.getElementById("count").textContent = "0 requests tracked";
   });
 });

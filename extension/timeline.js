@@ -16,11 +16,12 @@ function formatDateTime(ts) {
   return new Date(ts).toLocaleString();
 }
 
-chrome.storage.local.get({ requests: [], summary: {}, domainCounts: {}, domainRequestors: {} }, (result) => {
+chrome.storage.local.get({ requests: [], summary: {}, domainCounts: {}, domainRequestors: {}, browsedDomains: [] }, (result) => {
   const requests = result.requests;
   const summary = result.summary;
   const domainCounts = result.domainCounts;
   const domainRequestors = result.domainRequestors;
+  const browsedDomains = result.browsedDomains;
 
   if (requests.length === 0) {
     document.getElementById("timeline-base").innerHTML =
@@ -253,7 +254,7 @@ chrome.storage.local.get({ requests: [], summary: {}, domainCounts: {}, domainRe
   // Clear data button
   document.getElementById("clear-data").addEventListener("click", () => {
     if (!confirm("Clear all recorded data? This cannot be undone.")) return;
-    chrome.storage.local.remove(["requests", "summary", "domainCounts", "domainRequestors"], () => {
+    chrome.storage.local.remove(["requests", "summary", "domainCounts", "domainRequestors", "browsedDomains"], () => {
       location.reload();
     });
   });
@@ -400,4 +401,13 @@ chrome.storage.local.get({ requests: [], summary: {}, domainCounts: {}, domainRe
   }
 
   detailsEl.innerHTML = detailsHTML;
+
+  // Browsed domains list
+  const browsedEl = document.getElementById("browsed-domains");
+  if (browsedDomains.length > 0) {
+    const sorted = [...browsedDomains].sort();
+    browsedEl.innerHTML = "<ul>" + sorted.map((d) => "<li>" + d + "</li>").join("") + "</ul>";
+  } else {
+    browsedEl.innerHTML = '<div class="no-data">No browsed domains recorded yet.</div>';
+  }
 });
