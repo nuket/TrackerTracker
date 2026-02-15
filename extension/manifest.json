@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "CookieMonitor",
+  "name": "TrackerTracker",
   "version": "1.0",
   "description": "Tracks advertising domains accessed by different tabs while browsing.",
   "permissions": [
@@ -16,6 +16,6 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "CookieMonitor"
+    "default_title": "TrackerTracker"
   }
 }
