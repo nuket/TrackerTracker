@@ -285,8 +285,13 @@ chrome.storage.local.get({ requests: [], summary: {}, domainCounts: {}, domainRe
 
     // One row per tab domain
     for (const td of tabDomains) {
+      // Count dots in this row
+      let dotCount = 0;
+      for (const bd of reqBaseDomains) {
+        if (intersections[td + "|" + bd]) dotCount++;
+      }
       dotHTML += "<tr>";
-      dotHTML += '<td class="dot-chart-row-header" title="' + td + '">' + td + "</td>";
+      dotHTML += '<td class="dot-chart-row-header" title="' + td + '">' + td + " (" + dotCount + ")</td>";
       for (const bd of reqBaseDomains) {
         const hasDot = intersections[td + "|" + bd];
         const color = baseDomainColorMap[bd] || "#4285f4";
