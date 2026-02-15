@@ -27,6 +27,7 @@ Chrome extension that tracks the domains that different tabs access while browsi
         * Place a dot at the intersection when the requested base domain was requested by the tab domain
         * For each row, show the dot count in parentheses
         * Do not allow ellipses in the row labels, always show the full text
+        * Make a button that can toggle both axes between alphabetical order or sorted by "most dots"
     * Make an explanation paragraph with single linebreaks between sentences that says:
       "This chart shows the domains that follow you from one website to another, as you are browsing.
       Columns with more than one colored dot are tracking you across the websites named at the beginning of each row, these are either ad-tracking domains or Content Distribution Networks (CDNs).

@@ -263,36 +263,59 @@ chrome.storage.local.get({ requests: [], summary: {}, domainCounts: {}, domainRe
 
   // Dot chart: tab domains (Y) vs requested base domains (X)
   const dotChartEl = document.getElementById("dot-chart");
-  const tabDomains = [...new Set(requests.map((r) => r.tabDomain))].sort();
-  const reqBaseDomains = Object.keys(domainRequestors).sort();
+  const tabDomainsAlpha = [...new Set(requests.map((r) => r.tabDomain))].sort();
+  const reqBaseDomainsAlpha = Object.keys(domainRequestors).sort();
+  let dotChartSortByDots = false;
 
-  if (tabDomains.length > 0 && reqBaseDomains.length > 0) {
-    // Build lookup set for quick intersection check
-    const intersections = {};
-    for (const [baseDomain, tabs] of Object.entries(domainRequestors)) {
-      for (const tab of tabs) {
-        intersections[tab + "|" + baseDomain] = true;
-      }
+  // Build lookup set for quick intersection check
+  const intersections = {};
+  // Count dots per column (base domain)
+  const colDotCounts = {};
+  for (const [baseDomain, tabs] of Object.entries(domainRequestors)) {
+    colDotCounts[baseDomain] = tabs.length;
+    for (const tab of tabs) {
+      intersections[tab + "|" + baseDomain] = true;
     }
+  }
+
+  // Count dots per row (tab domain)
+  const rowDotCounts = {};
+  for (const td of tabDomainsAlpha) {
+    let count = 0;
+    for (const bd of reqBaseDomainsAlpha) {
+      if (intersections[td + "|" + bd]) count++;
+    }
+    rowDotCounts[td] = count;
+  }
+
+  function renderDotChart() {
+    if (tabDomainsAlpha.length === 0 || reqBaseDomainsAlpha.length === 0) {
+      dotChartEl.innerHTML = '<div class="no-data">No data for dot chart yet.</div>';
+      return;
+    }
+
+    const sortedBaseDomains = dotChartSortByDots
+      ? [...reqBaseDomainsAlpha].sort((a, b) => (colDotCounts[b] || 0) - (colDotCounts[a] || 0))
+      : reqBaseDomainsAlpha;
+
+    const sortedTabDomains = dotChartSortByDots
+      ? [...tabDomainsAlpha].sort((a, b) => (rowDotCounts[b] || 0) - (rowDotCounts[a] || 0))
+      : tabDomainsAlpha;
 
     let dotHTML = '<div class="dot-chart-scroll"><table class="dot-chart-table">';
     // Header row with base domain labels
     dotHTML += "<thead><tr><th></th>";
-    for (const bd of reqBaseDomains) {
+    for (const bd of sortedBaseDomains) {
       dotHTML += '<th class="dot-chart-col-header" title="' + bd + '"><div>' + bd + "</div></th>";
     }
     dotHTML += "</tr></thead><tbody>";
 
     // One row per tab domain
-    for (const td of tabDomains) {
-      // Count dots in this row
-      let dotCount = 0;
-      for (const bd of reqBaseDomains) {
-        if (intersections[td + "|" + bd]) dotCount++;
-      }
+    for (const td of sortedTabDomains) {
+      const dotCount = rowDotCounts[td] || 0;
       dotHTML += "<tr>";
       dotHTML += '<td class="dot-chart-row-header" title="' + td + '">' + td + " (" + dotCount + ")</td>";
-      for (const bd of reqBaseDomains) {
+      for (const bd of sortedBaseDomains) {
         const hasDot = intersections[td + "|" + bd];
         const color = baseDomainColorMap[bd] || "#4285f4";
         dotHTML += "<td>" + (hasDot
@@ -303,9 +326,17 @@ chrome.storage.local.get({ requests: [], summary: {}, domainCounts: {}, domainRe
     }
     dotHTML += "</tbody></table></div>";
     dotChartEl.innerHTML = dotHTML;
-  } else {
-    dotChartEl.innerHTML = '<div class="no-data">No data for dot chart yet.</div>';
+
+    document.getElementById("dot-chart-sort-btn").textContent =
+      dotChartSortByDots ? "Sort: Most Dots" : "Sort: Alphabetical";
   }
+
+  document.getElementById("dot-chart-sort-btn").addEventListener("click", () => {
+    dotChartSortByDots = !dotChartSortByDots;
+    renderDotChart();
+  });
+
+  renderDotChart();
 
   // Histogram of base domain request counts
   const histogramEl = document.getElementById("histogram");
