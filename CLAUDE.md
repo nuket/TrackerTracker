@@ -1,12 +1,13 @@
 # Project: TrackerTracker
 
-Chrome extension that tracks the advertising domains that different tabs access while browsing.
+A Chrome extension that tracks the advertising domains that different tabs access while browsing.
 
 Maybe some false positives for Content Distribution Networks (CDNs) in the current version.
 
 ## Instructions
 
 * Create a Chrome extension that receives events when a tab opens a webpage
+    * Make an icon for the extension using the 🧐 emoji with no border and no padding
 * Each time this happens
     * Record the name and domain of the tab that made the web request
     * Record the full domain being requested
