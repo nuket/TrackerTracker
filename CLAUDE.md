@@ -2,7 +2,7 @@
 
 Chrome extension that tracks the advertising domains that different tabs access while browsing.
 
-Maybe some false positives for Contend Distribution Networks (CDNs) in the current version.
+Maybe some false positives for Content Distribution Networks (CDNs) in the current version.
 
 ## Instructions
 
@@ -47,11 +47,10 @@ Maybe some false positives for Contend Distribution Networks (CDNs) in the curre
            In other words, it takes all of those requests (however many there are!) and folds them into a single dot.
            This histogram shows the actual number of requests to the tracking domains.
            Requests to subdomains are folded into the tracking domain, i.e. `subdomain.doubleclick.net` -> `doubleclick.net` count."
+        * Make a button that can toggle the histogram between alphabetical order or most-requested order
     * Make a timeline with the base domains and when they were requested
     * Under that, make a timeline with the full domains of the websites that were opened
-    * Make it possible to zoom in and out of both timelines
-    * Make a button called "Test" that opens "nypost.com, videocardz.net, vilimpoc.org, www.channelnewsasia.com, www.nytimes.com, www.phoronix.com, www.reddit.com, www.theguardian.com, www.theregister.com" in tabs
-        * This button should be visible in the extension popup window
-    * Make a button that can clear the extension's local storage
-    * Make a button that can toggle the histogram between alphabetical order or most-requested order
-    * Print a bulleted list of the domains in the "browsedDomains" set
+    * Put the following two buttons in a group right-aligned to the page header, do not float this group:
+        * Make a button called "Test" that opens "nypost.com, videocardz.net, vilimpoc.org, www.channelnewsasia.com, www.nytimes.com, www.phoronix.com, www.reddit.com, www.theguardian.com, www.theregister.com" in tabs
+            * This button should be visible in the extension popup window
+        * Make a button that can clear the extension's local storage

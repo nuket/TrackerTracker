@@ -23,6 +23,32 @@ chrome.storage.local.get({ requests: [], summary: {}, domainCounts: {}, domainRe
   const domainRequestors = result.domainRequestors;
   const browsedDomains = result.browsedDomains;
 
+  // Test button - open test websites in new tabs
+  const TEST_URLS = [
+    "https://nypost.com",
+    "https://videocardz.net",
+    "https://vilimpoc.org",
+    "https://www.channelnewsasia.com",
+    "https://www.nytimes.com",
+    "https://www.phoronix.com",
+    "https://www.reddit.com",
+    "https://www.theguardian.com",
+    "https://www.theregister.com"
+  ];
+  document.getElementById("test-btn").addEventListener("click", () => {
+    for (const url of TEST_URLS) {
+      chrome.tabs.create({ url, active: false });
+    }
+  });
+
+  // Clear data button
+  document.getElementById("clear-data").addEventListener("click", () => {
+    if (!confirm("Clear all recorded data? This cannot be undone.")) return;
+    chrome.storage.local.remove(["requests", "summary", "domainCounts", "domainRequestors", "browsedDomains"], () => {
+      location.reload();
+    });
+  });
+
   if (requests.length === 0) {
     document.getElementById("timeline-base").innerHTML =
       '<div class="no-data">No requests recorded yet. Browse some websites and check back.</div>';
@@ -31,7 +57,6 @@ chrome.storage.local.get({ requests: [], summary: {}, domainCounts: {}, domainRe
     document.getElementById("details").innerHTML =
       '<div class="no-data">No data to display.</div>';
     document.getElementById("summary").textContent = "No data recorded.";
-    document.getElementById("zoom-controls").style.display = "none";
     return;
   }
 
@@ -80,12 +105,6 @@ chrome.storage.local.get({ requests: [], summary: {}, domainCounts: {}, domainRe
     requests.length + " requests across " +
     groups.length + " site(s), from " +
     formatDateTime(globalMin) + " to " + formatDateTime(globalMax);
-
-  // Zoom state
-  let zoomLevel = 1;
-  const MIN_ZOOM = 0.25;
-  const MAX_ZOOM = 10;
-  const ZOOM_STEP = 0.25;
 
   function buildTimeAxis(barWidth) {
     let html = '<div class="timeline-axis"><div class="timeline-label"></div><div class="timeline-bar-area" style="min-width:' + barWidth + 'px;position:relative;">';
@@ -184,87 +203,16 @@ chrome.storage.local.get({ requests: [], summary: {}, domainCounts: {}, domainRe
   }
 
   function renderTimelines() {
-    const barWidth = Math.round(BASE_BAR_WIDTH * zoomLevel);
-    renderBaseTimeline(barWidth);
-    renderFullTimeline(barWidth);
-    document.getElementById("zoom-level").textContent = Math.round(zoomLevel * 100) + "%";
+    renderBaseTimeline(BASE_BAR_WIDTH);
+    renderFullTimeline(BASE_BAR_WIDTH);
   }
-
-  function setZoom(newLevel) {
-    const containers = [
-      document.getElementById("timeline-base"),
-      document.getElementById("timeline-full")
-    ];
-    // Save scroll ratios for both containers
-    const scrollData = containers.map((el) => {
-      const oldBarWidth = BASE_BAR_WIDTH * zoomLevel;
-      const scrollCenter = el.scrollLeft + el.clientWidth / 2;
-      return oldBarWidth > 0 ? scrollCenter / oldBarWidth : 0;
-    });
-
-    zoomLevel = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newLevel));
-    renderTimelines();
-
-    // Restore scroll positions
-    const newBarWidth = BASE_BAR_WIDTH * zoomLevel;
-    containers.forEach((el, i) => {
-      el.scrollLeft = scrollData[i] * newBarWidth - el.clientWidth / 2;
-    });
-  }
-
-  // Zoom controls
-  document.getElementById("zoom-in").addEventListener("click", () => {
-    setZoom(zoomLevel + ZOOM_STEP);
-  });
-  document.getElementById("zoom-out").addEventListener("click", () => {
-    setZoom(zoomLevel - ZOOM_STEP);
-  });
-  document.getElementById("zoom-reset").addEventListener("click", () => {
-    setZoom(1);
-  });
-
-  // Ctrl + scroll to zoom on either timeline
-  for (const id of ["timeline-base", "timeline-full"]) {
-    document.getElementById(id).addEventListener("wheel", (e) => {
-      if (!e.ctrlKey) return;
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
-      setZoom(zoomLevel + delta);
-    }, { passive: false });
-  }
-
-  // Test button - open test websites in new tabs
-  const TEST_URLS = [
-    "https://nypost.com",
-    "https://videocardz.net",
-    "https://vilimpoc.org",
-    "https://www.channelnewsasia.com",
-    "https://www.nytimes.com",
-    "https://www.phoronix.com",
-    "https://www.reddit.com",
-    "https://www.theguardian.com",
-    "https://www.theregister.com"
-  ];
-  document.getElementById("test-btn").addEventListener("click", () => {
-    for (const url of TEST_URLS) {
-      chrome.tabs.create({ url, active: false });
-    }
-  });
-
-  // Clear data button
-  document.getElementById("clear-data").addEventListener("click", () => {
-    if (!confirm("Clear all recorded data? This cannot be undone.")) return;
-    chrome.storage.local.remove(["requests", "summary", "domainCounts", "domainRequestors", "browsedDomains"], () => {
-      location.reload();
-    });
-  });
 
   // Initial render
   renderTimelines();
 
-  // Dot chart: tab domains (Y) vs requested base domains (X)
+  // Dot chart: browsed domains (Y) vs requested base domains (X)
   const dotChartEl = document.getElementById("dot-chart");
-  const tabDomainsAlpha = [...new Set(requests.map((r) => r.tabDomain))].sort();
+  const tabDomainsAlpha = [...browsedDomains].sort();
   const reqBaseDomainsAlpha = Object.keys(domainRequestors).sort();
   let dotChartSortByDots = false;
 
@@ -401,13 +349,4 @@ chrome.storage.local.get({ requests: [], summary: {}, domainCounts: {}, domainRe
   }
 
   detailsEl.innerHTML = detailsHTML;
-
-  // Browsed domains list
-  const browsedEl = document.getElementById("browsed-domains");
-  if (browsedDomains.length > 0) {
-    const sorted = [...browsedDomains].sort();
-    browsedEl.innerHTML = "<ul>" + sorted.map((d) => "<li>" + d + "</li>").join("") + "</ul>";
-  } else {
-    browsedEl.innerHTML = '<div class="no-data">No browsed domains recorded yet.</div>';
-  }
 });

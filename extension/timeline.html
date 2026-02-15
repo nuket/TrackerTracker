@@ -7,18 +7,15 @@
 </head>
 <body>
   <header>
-    <h1>TrackerTracker Timeline</h1>
-    <p id="summary"></p>
+    <div>
+      <h1>TrackerTracker Timeline</h1>
+      <p id="summary"></p>
+    </div>
+    <div id="toolbar">
+      <button id="test-btn" title="Open test websites in new tabs">Test</button>
+      <button id="clear-data" title="Clear all recorded data">Clear Data</button>
+    </div>
   </header>
-  <div id="zoom-controls">
-    <button id="zoom-out" title="Zoom out">&#x2212;</button>
-    <span id="zoom-level">100%</span>
-    <button id="zoom-in" title="Zoom in">+</button>
-    <button id="zoom-reset" title="Reset zoom">Reset</button>
-    <span class="zoom-hint">Ctrl + scroll to zoom</span>
-    <button id="test-btn" title="Open test websites in new tabs">Test</button>
-    <button id="clear-data" title="Clear all recorded data">Clear Data</button>
-  </div>
   <div class="section-header-row">
     <h2 class="section-heading">Cross-Website Trackers</h2>
     <button id="dot-chart-sort-btn" class="sort-btn">Sort: Alphabetical</button>
@@ -36,8 +33,6 @@
   <h2 class="section-heading">Full Domains Timeline</h2>
   <div id="timeline-full" class="timeline-container"></div>
   <div id="details"></div>
-  <h2 class="section-heading">Browsed Domains</h2>
-  <div id="browsed-domains" class="browsed-domains-container"></div>
   <script src="timeline.js"></script>
 </body>
 </html>
