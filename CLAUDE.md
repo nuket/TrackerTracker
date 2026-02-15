@@ -25,9 +25,12 @@ Chrome extension that tracks the domains that different tabs access while browsi
         * Freeze the Y axis labels so that scrolling always shows the tab domains
         * Freeze the X axis labels so that scrolling always shows the requested base domains
         * Place a dot at the intersection when the requested base domain was requested by the tab domain
-    * Make an explanation paragraph that says:
-      "This chart shows the ad tracking domains that follow you from one website to another, as you are browsing.
-      Columns with more than one colored dot are tracking you across the websites named at the beginning of each row."
+    * Make an explanation paragraph with single linebreaks between sentences that says:
+      "This chart shows the domains that follow you from one website to another, as you are browsing.
+      Columns with more than one colored dot are tracking you across the websites named at the beginning of each row, these are either ad-tracking domains or Content Distribution Networks (CDNs).
+      Rows show the total number of trackers that a website sets on you, so more dots = more trackers, and lots of dots is bad.
+      Interesting patterns emerge.
+      For example, if you browse `nypost.com` and `theguardian.com`, you see that both use `bidswitch.net` and `doubleclick.net` for tracking."
     * Make a histogram of the number of times the requested base domain was requested using the counted up data
     * Make a timeline with the base domains and when they were requested
     * Under that, make a timeline with the full domains of the websites that were opened
