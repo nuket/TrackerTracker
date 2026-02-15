@@ -67,8 +67,11 @@ chrome.webRequest.onBeforeRequest.addListener(
       // Skip requests made by the extension itself
       if (tab.url.startsWith(chrome.runtime.getURL(""))) return;
 
+      // Skip requests from new tab pages
+      if (tab.url === "chrome://newtab/" || tab.url === "about:newtab") return;
+
       const tabDomain = extractDomain(tab.url);
-      if (!tabDomain) return;
+      if (!tabDomain || tabDomain === "newtab") return;
 
       const entry = {
         tabTitle: tab.title || tabDomain,
