@@ -28,6 +28,7 @@ Maybe some false positives for Contend Distribution Networks (CDNs) in the curre
         * Freeze the X axis labels so that scrolling always shows the domains
         * Place a dot at the intersection when the requested base domain was requested by the tab domain
         * For each row, show the dot count in parentheses
+        * Do not allow ellipses in the column labels, always show the full text
         * Do not allow ellipses in the row labels, always show the full text
         * Make a button that can toggle both axes between alphabetical order or sorted by "most dots"
     * Make an explanation paragraph with single linebreaks between sentences that says:

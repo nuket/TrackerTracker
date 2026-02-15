@@ -101,7 +101,6 @@ h1 {
 }
 
 .dot-chart-col-header {
-  max-width: 80px;
   vertical-align: bottom;
   padding-bottom: 8px;
   position: sticky;
@@ -113,9 +112,6 @@ h1 {
 .dot-chart-col-header div {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
-  max-height: 120px;
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
   font-weight: 600;
   color: #555;
