@@ -66,6 +66,66 @@ h1 {
   background: #f0f0f0;
 }
 
+.dot-chart-container {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.dot-chart-scroll {
+  overflow: auto;
+  max-height: 500px;
+}
+
+.dot-chart-table {
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.dot-chart-table th,
+.dot-chart-table td {
+  padding: 4px 6px;
+  text-align: center;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.dot-chart-col-header {
+  max-width: 80px;
+  vertical-align: bottom;
+  padding-bottom: 8px;
+}
+
+.dot-chart-col-header div {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  max-height: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  color: #555;
+}
+
+.dot-chart-row-header {
+  text-align: right;
+  padding-right: 10px;
+  font-weight: 600;
+  color: #555;
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
 .histogram-container {
   background: #fff;
   border: 1px solid #ddd;

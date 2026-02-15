@@ -16,10 +16,11 @@ function formatDateTime(ts) {
   return new Date(ts).toLocaleString();
 }
 
-chrome.storage.local.get({ requests: [], summary: {}, domainCounts: {} }, (result) => {
+chrome.storage.local.get({ requests: [], summary: {}, domainCounts: {}, domainRequestors: {} }, (result) => {
   const requests = result.requests;
   const summary = result.summary;
   const domainCounts = result.domainCounts;
+  const domainRequestors = result.domainRequestors;
 
   if (requests.length === 0) {
     document.getElementById("timeline-base").innerHTML =
@@ -234,13 +235,54 @@ chrome.storage.local.get({ requests: [], summary: {}, domainCounts: {} }, (resul
   // Clear data button
   document.getElementById("clear-data").addEventListener("click", () => {
     if (!confirm("Clear all recorded data? This cannot be undone.")) return;
-    chrome.storage.local.remove(["requests", "summary", "domainCounts"], () => {
+    chrome.storage.local.remove(["requests", "summary", "domainCounts", "domainRequestors"], () => {
       location.reload();
     });
   });
 
   // Initial render
   renderTimelines();
+
+  // Dot chart: tab domains (Y) vs requested base domains (X)
+  const dotChartEl = document.getElementById("dot-chart");
+  const tabDomains = [...new Set(requests.map((r) => r.tabDomain))].sort();
+  const reqBaseDomains = Object.keys(domainRequestors).sort();
+
+  if (tabDomains.length > 0 && reqBaseDomains.length > 0) {
+    // Build lookup set for quick intersection check
+    const intersections = {};
+    for (const [baseDomain, tabs] of Object.entries(domainRequestors)) {
+      for (const tab of tabs) {
+        intersections[tab + "|" + baseDomain] = true;
+      }
+    }
+
+    let dotHTML = '<div class="dot-chart-scroll"><table class="dot-chart-table">';
+    // Header row with base domain labels
+    dotHTML += "<thead><tr><th></th>";
+    for (const bd of reqBaseDomains) {
+      dotHTML += '<th class="dot-chart-col-header" title="' + bd + '"><div>' + bd + "</div></th>";
+    }
+    dotHTML += "</tr></thead><tbody>";
+
+    // One row per tab domain
+    for (const td of tabDomains) {
+      dotHTML += "<tr>";
+      dotHTML += '<td class="dot-chart-row-header" title="' + td + '">' + td + "</td>";
+      for (const bd of reqBaseDomains) {
+        const hasDot = intersections[td + "|" + bd];
+        const color = baseDomainColorMap[bd] || "#4285f4";
+        dotHTML += "<td>" + (hasDot
+          ? '<span class="dot" style="background:' + color + '"></span>'
+          : "") + "</td>";
+      }
+      dotHTML += "</tr>";
+    }
+    dotHTML += "</tbody></table></div>";
+    dotChartEl.innerHTML = dotHTML;
+  } else {
+    dotChartEl.innerHTML = '<div class="no-data">No data for dot chart yet.</div>';
+  }
 
   // Histogram of base domain request counts
   const histogramEl = document.getElementById("histogram");

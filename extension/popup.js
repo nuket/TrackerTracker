@@ -9,7 +9,7 @@ document.getElementById("view").addEventListener("click", () => {
 });
 
 document.getElementById("clear").addEventListener("click", () => {
-  chrome.storage.local.set({ requests: [], summary: {}, domainCounts: {} }, () => {
+  chrome.storage.local.set({ requests: [], summary: {}, domainCounts: {}, domainRequestors: {} }, () => {
     document.getElementById("count").textContent = "0 requests tracked";
   });
 });
