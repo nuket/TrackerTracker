@@ -284,7 +284,8 @@ h1 {
   background: #f0f0f0;
 }
 
-#zoom-controls #zoom-reset {
+#zoom-controls #zoom-reset,
+#zoom-controls #test-btn {
   width: auto;
   padding: 0 12px;
   font-size: 13px;

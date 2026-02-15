@@ -35,5 +35,7 @@ Chrome extension that tracks the domains that different tabs access while browsi
     * Make a timeline with the base domains and when they were requested
     * Under that, make a timeline with the full domains of the websites that were opened
     * Make it possible to zoom in and out of both timelines
+    * Make a button called "Test" that opens "nypost.com, videocardz.net, vilimpoc.org, www.channelnewsasia.com, www.nytimes.com, www.phoronix.com, www.reddit.com, www.theguardian.com, www.theregister.com" in tabs
+        * This button should be visible in the extension popup window
     * Make a button that can clear the extension's local storage
     * Make a button that can toggle the histogram between alphabetical order or most-requested order
