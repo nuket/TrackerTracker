@@ -22,8 +22,8 @@ Chrome extension that tracks the domains that different tabs access while browsi
 * Make a visualization webpage
     * Make a chart with the tab domains on the Y axis and the requested base domains on the X axis
         * The chart header is "Cross-Website Trackers"
-        * Freeze the Y axis labels so that scrolling always shows the tab domains
-        * Freeze the X axis labels so that scrolling always shows the requested base domains
+        * Freeze the Y axis labels so that scrolling always shows the domains
+        * Freeze the X axis labels so that scrolling always shows the domains
         * Place a dot at the intersection when the requested base domain was requested by the tab domain
         * For each row, show the dot count in parentheses
         * Do not allow ellipses in the row labels, always show the full text
