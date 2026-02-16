@@ -2,8 +2,6 @@
 
 A Chrome extension that tracks the advertising domains that different tabs access while browsing.
 
-Maybe some false positives for Content Distribution Networks (CDNs) in the current version.
-
 ## Instructions
 
 * Create a Chrome extension that receives events when a tab opens a webpage
