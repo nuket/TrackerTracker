@@ -26,6 +26,7 @@ A Chrome extension that tracks the advertising domains that different tabs acces
 * Make a visualization webpage
     * Make a chart with the "browsedDomains" on the Y axis and the requested base domains on the X axis
         * The chart header is "Cross-Website Trackers"
+        * Expand the chart in the Y direction as new browsed domains are added, it should never have to scroll
         * Freeze the Y axis labels so that scrolling always shows the domains
         * Freeze the X axis labels so that scrolling always shows the domains
         * Place a dot at the intersection when the requested base domain was requested by the tab domain
